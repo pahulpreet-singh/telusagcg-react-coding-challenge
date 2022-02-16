@@ -1,6 +1,6 @@
 # Telus Agriculture Coding Challenge
 
-This is a blank React 11.x starter project to test potential developers.  It includes a simple api server for your react application to consume and persist data from.
+This is a blank React starter project to test potential developers.  It includes a simple api server for your react application to consume and persist data from.
 
 ## Prerequisites
 

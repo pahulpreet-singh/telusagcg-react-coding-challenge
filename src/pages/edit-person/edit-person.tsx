@@ -1,6 +1,7 @@
-import { useState } from "react";
+import "./edit-person.css"
+import { Button } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
-import PersonForm from "../../components/person-form";
+import PersonForm from "../../components/person-form/person-form";
 import { People } from "../../interfaces/people.interface";
 
 
@@ -14,18 +15,18 @@ const EditPerson = () => {
     const navigate = useNavigate();
     const { person } = location.state as LocationState;
 
-    const [isFormValid, setIsFormValid] = useState(false);
-
-    const onSaveClick = () => {
-
+    const onFormSubmit = (event: any) => {
+        event.preventDefault();
     }
 
     return <>
-        <button onClick={() => navigate(-1)}>Go back</button>
-        <div className="form-container">
-            <PersonForm />
+        <Button onClick={() => navigate(-1)} variant="dark">Back</Button>
+        <div className="edit-form-container">
+            <h3>Edit person: {person.name}</h3>
+            <div className="form-container">
+                <PersonForm person={person} onFormSubmit={onFormSubmit} />
+            </div>
         </div>
-        <button disabled={!isFormValid} onClick={onSaveClick}>Save</button>
     </>
 }
 

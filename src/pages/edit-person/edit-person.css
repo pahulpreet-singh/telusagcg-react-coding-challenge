@@ -1,4 +1,9 @@
 .edit-form-container {
     width: 70%;
     margin: auto;
+    margin-top: 20px;
+}
+
+.delete-btn {
+    margin-left: 16px;
 }

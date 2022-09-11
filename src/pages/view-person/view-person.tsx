@@ -111,9 +111,9 @@ const ViewPerson = () => {
                     <Col className="label">
                         {person.tags && person.tags.map((tag, index, { length }) => {
                             if ((length - 1) === index) {
-                                return <span key={tag}>{tag}</span>
+                                return <span key={tag+index}>{tag}</span>
                             } else {
-                                return <span key={tag}>{tag}, {' '}</span>
+                                return <span key={tag+index}>{tag}, {' '}</span>
                             }
                         })}
                         {!person.tags && <>No tags</>}

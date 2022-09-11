@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import "./person-form.css"
 import { People } from "../../interfaces/people.interface";
 import { Button, Form } from "react-bootstrap";
@@ -6,29 +6,25 @@ import { Button, Form } from "react-bootstrap";
 const PersonForm = (props: PersonFormProps) => {
 
     const { person, onFormSubmit } = props;
+    const [name, setName] = useState(person ? person.name : "");
+    const [age, setAge] = useState(person ? person.age : "");
+    const [isActive, setIsActive] = useState(person ? person.isActive : false);
+    const [about, setAbout] = useState(person ? person.about : "");
+    const [gender, setGender] = useState(person ? person.gender : "");
 
-    const [isFormValid, setIsFormValid] = useState(person ? true : false);
-    const [name, setName] = useState(person ? person.name : undefined);
-    const [age, setAge] = useState(person ? person.age : undefined);
-    const [isActive, setIsActive] = useState(person ? person.isActive : undefined);
-    const [about, setAbout] = useState(person ? person.about : undefined);
-    const [gender, setGender] = useState(person ? person.gender : undefined);
-
-    const validateForm = () => {
+    const isFormValid = useMemo(() => {
         if (name && age && gender) {
-            setIsFormValid(true);
+            return true;
         } else {
-            setIsFormValid(false);
+            return false;
         }
-    }
+    }, [name, age, gender]);
 
     const onNameChange = (event: any) => {
         if (event.target.value) {
             setName(event.target.value)
-            validateForm();
         } else {
             setName("");
-            setIsFormValid(false);
         }
     }
 
@@ -39,10 +35,8 @@ const PersonForm = (props: PersonFormProps) => {
     const onAgeChange = (event: any) => {
         if (event.target.value) {
             setAge(event.target.value);
-            validateForm();
         } else {
-            setAge(undefined);
-            setIsFormValid(false);
+            setAge("");
         }
     }
 
@@ -54,12 +48,11 @@ const PersonForm = (props: PersonFormProps) => {
         const gender = event.target.value
         if (gender === "male" || gender === "female") {
             setGender(event.target.value);
-            validateForm();
         }
     }
 
     return <div className="form-container">
-        <Form onSubmit={onFormSubmit} >
+        <Form validated={isFormValid} onSubmit={onFormSubmit} >
             <Form.Group className="mb-3" controlId="name">
                 <Form.Label>Name</Form.Label>
                 <Form.Control 

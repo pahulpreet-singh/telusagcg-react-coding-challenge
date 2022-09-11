@@ -111,9 +111,9 @@ const ViewPerson = () => {
                     <Col className="label">
                         {person.tags && person.tags.map((tag, index, { length }) => {
                             if ((length - 1) === index) {
-                                return <>{tag}</>
+                                return <span key={tag}>{tag}</span>
                             } else {
-                                return <>{tag}, {' '}</>
+                                return <span key={tag}>{tag}, {' '}</span>
                             }
                         })}
                         {!person.tags && <>No tags</>}
@@ -126,9 +126,9 @@ const ViewPerson = () => {
                     <Col className="label">
                         {person.friends && person.friends.map((friend, index, { length }) => {
                             if ((length - 1) === index) {
-                                return <>{friend.name}</>
+                                return <span key={friend.id}>{friend.name}</span>
                             } else {
-                                return <>{friend.name}, {' '}</>
+                                return <span key={friend.id}>{friend.name}, {' '}</span>
                             }
                         })}
                         {!person.friends && <>No friends</>}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { RefObject, useEffect, useRef, useState } from "react";
 import "./landing-page.css"
 import { Button } from "react-bootstrap";
 import Table from "react-bootstrap/Table";
@@ -53,10 +53,18 @@ const LandingPageComponent = () => {
         setFilteredPeople(people.filter(person => person.name.toLowerCase().includes(query.toLowerCase())))
     }
 
+    const searchRef = useRef<HTMLInputElement>(null);
+    const onClearSearchInputHandler = (searchRef: RefObject<HTMLInputElement>) => {
+        if (searchRef.current) {
+            searchRef.current.value = "";
+        }
+        setFilteredPeople(people);
+    }
+
     return <>
         <div className="utilities-container">
             <Button onClick={toggleAddPersonModal} className="add-btn" variant="primary">Add Person</Button>
-            <SearchBar onInputChangeHandler={onInputChangeHandler} />
+            <SearchBar searchRef={searchRef} onClearSearchInputHandler={onClearSearchInputHandler} onInputChangeHandler={onInputChangeHandler} />
         </div>
         <AddPerson show={showAddPerson} handleClose={toggleAddPersonModal} />
         {!filteredPeople.length && <h4>No data found</h4>}

@@ -1,6 +1,10 @@
+import { RefObject } from "react"
 import "./searchForm.css"
 
-const SearchBar = ({ onInputChangeHandler }: SearchBarProps) => {
+const SearchBar = (props: SearchBarProps) => {
+
+    const { searchRef, onInputChangeHandler, onClearSearchInputHandler } = props;
+
     function debounce<Params extends any[]>(
         func: (...args: Params) => any,
         timeout: number,
@@ -14,17 +18,23 @@ const SearchBar = ({ onInputChangeHandler }: SearchBarProps) => {
         }
     }
     return (
-        <input
-            type={"text"}
-            onChange={debounce(onInputChangeHandler, 1000)}
-            name="search"
-            placeholder="Enter Search Query"
-            className="search-bar"
-        />
+        <span className="clearable">
+            <input
+                type={"text"}
+                onChange={debounce(onInputChangeHandler, 1000)}
+                name="search"
+                placeholder="Enter Search Query"
+                className="search-bar"
+                ref={searchRef}
+            />
+            <i className="clearable__clear" onClick={() => onClearSearchInputHandler(searchRef)}>&times;</i>
+        </span>
     )
 }
 
 interface SearchBarProps {
+    searchRef: RefObject<HTMLInputElement>,
+    onClearSearchInputHandler: (searchRef: RefObject<HTMLInputElement>) => void,
     onInputChangeHandler: (event: any) => void,
 }
 

@@ -1,0 +1,43 @@
+.view-container {
+    margin-top: 20px;
+}
+
+.heading {
+    font-size: 20px;
+    font-weight: 500;
+    color: rgb(56, 55, 55);
+    margin-bottom: 6px;
+}
+
+.label {
+    font-size: 18px;
+    color: rgb(62, 62, 62);
+    margin-bottom: 12px;
+}
+
+.person-content {
+    margin-left: 8px;
+    margin-right: 8px;
+}
+
+a {
+    font-size: 18px;
+    margin-bottom: 12px;
+}
+
+.welcome-container {
+    margin-bottom: 20px;
+}
+
+.welcome-label {
+    font-size: 32px;
+    font-weight: 500;
+}
+
+.member-label {
+    margin-left: 16px;
+}
+
+.edit-button {
+    margin-left: 16px;
+}

@@ -1,7 +1,7 @@
 import { Friends } from "./friends.interface";
 
 export interface People {
-    id: number,
+    id: string,
     isActive: boolean,
     balance: string,
     picture: string,

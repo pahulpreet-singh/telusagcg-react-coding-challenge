@@ -11,3 +11,7 @@
     grid-template-columns: 25% auto;
     align-items: center;
 }
+
+.person-name-table {
+    cursor: pointer;
+}

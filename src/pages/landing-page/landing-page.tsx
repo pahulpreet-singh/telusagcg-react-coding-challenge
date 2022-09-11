@@ -2,7 +2,7 @@ import { RefObject, useEffect, useRef, useState } from "react";
 import "./landing-page.css"
 import { Button } from "react-bootstrap";
 import Table from "react-bootstrap/Table";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { People } from "../../interfaces/people.interface";
 import AddPerson from "../../components/add-person/add-person";
 import Notification from "../../components/toast-notification/toast-notification";
@@ -12,6 +12,7 @@ const LandingPageComponent = () => {
 
     // TODO: add pagination
 
+    const navigate = useNavigate();
     const location = useLocation();
     const locationState = location.state as LocationState ?? {}
     const { showToastMessage, toastMessage } = locationState;
@@ -61,6 +62,10 @@ const LandingPageComponent = () => {
         setFilteredPeople(people);
     }
 
+    const goToPerson = (id: string) => {
+        navigate(`/people/${id}`);
+    }
+
     return <>
         <div className="utilities-container">
             <Button onClick={toggleAddPersonModal} className="add-btn" variant="primary">Add Person</Button>
@@ -81,7 +86,7 @@ const LandingPageComponent = () => {
                 {filteredPeople && filteredPeople.map((person, index) => {
                     return <tr key={person.id}>
                         <td>{index + 1}</td>
-                        <td>{person.name}</td>
+                        <td className="person-name-table" onClick={() => goToPerson(person.id)}>{person.name}</td>
                         <td>{getRegisteredDate(person.registered)}</td>
                         <td>{getActiveStatus(person.isActive)}</td>
                         <td>

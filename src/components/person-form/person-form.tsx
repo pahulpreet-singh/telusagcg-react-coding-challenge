@@ -63,6 +63,7 @@ const PersonForm = (props: PersonFormProps) => {
             <Form.Group className="mb-3" controlId="name">
                 <Form.Label>Name</Form.Label>
                 <Form.Control 
+                    name="name"
                     type="text" 
                     required 
                     maxLength={70}
@@ -72,6 +73,7 @@ const PersonForm = (props: PersonFormProps) => {
             <Form.Group className="mb-3" controlId="isActive">
                 <Form.Label>Is Active</Form.Label>
                 <Form.Check
+                    name="isActive"
                     type="switch"
                     id="isActive"
                     checked={isActive}
@@ -81,6 +83,7 @@ const PersonForm = (props: PersonFormProps) => {
             <Form.Group className="mb-3" controlId="age">
                 <Form.Label>Age</Form.Label>
                 <Form.Control 
+                    name="age"
                     type="number" 
                     min={18} 
                     max={110} 
@@ -92,6 +95,7 @@ const PersonForm = (props: PersonFormProps) => {
             <Form.Group className="mb-3" controlId="about">
                 <Form.Label>About</Form.Label>
                 <Form.Control 
+                    name="about"
                     as="textarea" 
                     placeholder="Tell us a little about yourself" 
                     maxLength={250}
@@ -101,6 +105,7 @@ const PersonForm = (props: PersonFormProps) => {
             <Form.Group className="mb-3" controlId="gender">
                 <Form.Label>Gender</Form.Label>
                 <Form.Select 
+                    name="gender"
                     required
                     value={gender}
                     onChange={onGenderChange} >

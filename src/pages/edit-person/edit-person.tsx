@@ -34,7 +34,7 @@ const EditPerson = () => {
             .then(response => response.json())
             .then(
                 (result) => {
-                    navigate("/people")
+                    navigate(`/people/${result.id}`)
             }, (error) => {
                 console.log("error updating", error);
             });

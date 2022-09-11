@@ -1,3 +1,13 @@
 .add-btn {
     margin-bottom: 20px;
+    width: max-content;
+    height: 50px;
+    font-size: 18px;
+    margin-top: 10px;
+}
+
+.utilities-container {
+    display: grid;
+    grid-template-columns: 25% auto;
+    align-items: center;
 }

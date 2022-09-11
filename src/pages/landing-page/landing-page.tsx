@@ -6,6 +6,7 @@ import { Link, useLocation } from "react-router-dom";
 import { People } from "../../interfaces/people.interface";
 import AddPerson from "../../components/add-person/add-person";
 import Notification from "../../components/toast-notification/toast-notification";
+import SearchBar from "../../components/search-form/searchForm";
 
 const LandingPageComponent = () => {
 
@@ -16,6 +17,7 @@ const LandingPageComponent = () => {
     const { showToastMessage, toastMessage } = locationState;
 
     const [people, setPeople] = useState<People[]>([]);
+    const [filteredPeople, setFilteredPeople] = useState<People[]>([]);
     const [showAddPerson, setShowAddPerson] = useState(false);
     const [showToast, setShowToast] = useState(showToastMessage);
 
@@ -24,6 +26,7 @@ const LandingPageComponent = () => {
             .then(res => res.json())
             .then(result => {
                 setPeople(result)
+                setFilteredPeople(result);
             });
     }, [])
 
@@ -45,8 +48,16 @@ const LandingPageComponent = () => {
         window.history.replaceState({}, document.title)
     };
 
+    const onInputChangeHandler = (event: any) => {
+        const query = event.target.value;
+        setFilteredPeople(people.filter(person => person.name.toLowerCase().includes(query.toLowerCase())))
+    }
+
     return <>
-        <Button onClick={toggleAddPersonModal} className="add-btn" variant="primary">Add Person</Button>
+        <div className="utilities-container">
+            <Button onClick={toggleAddPersonModal} className="add-btn" variant="primary">Add Person</Button>
+            <SearchBar onInputChangeHandler={onInputChangeHandler} />
+        </div>
         <AddPerson show={showAddPerson} handleClose={toggleAddPersonModal} />
         <Table striped bordered hover>
             <thead>
@@ -58,7 +69,7 @@ const LandingPageComponent = () => {
                 </tr>
             </thead>
             <tbody>
-                {people && people.map((person, index) => {
+                {filteredPeople && filteredPeople.map((person, index) => {
                     return <tr key={person.id}>
                         <td>{index+1}</td>
                         <td>{person.name}</td>

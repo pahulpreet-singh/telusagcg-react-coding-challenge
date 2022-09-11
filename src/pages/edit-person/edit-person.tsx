@@ -3,9 +3,10 @@ import { Button } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import PersonForm from "../../components/person-form/person-form";
 import { People } from "../../interfaces/people.interface";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import DeletePersonModal from "../../components/delete-person/delete-person";
 import Notification from "../../components/toast-notification/toast-notification";
+import { searchQueryContext } from "../../contexts/search-query.provider";
 
 interface LocationState {
     person: People
@@ -16,6 +17,10 @@ const EditPerson = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const { person } = location.state as LocationState;
+
+    const { query, list} = useContext(searchQueryContext);
+    const [searchQuery, setSearchQuery] = query;
+    const [savedPeopleList, setSavedPeopleList] = list;
 
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showToast, setShowToast] = useState(false);
@@ -56,6 +61,8 @@ const EditPerson = () => {
         }
         fetch(`http://localhost:4500/people/${person.id}`, requestOptions)
             .then(() => {
+                setSavedPeopleList(null);
+                setSearchQuery(null);
                 navigate("/people",
                     { state: { showToastMessage: true, toastMessage: "Person has been deleted" } })
             }, (error) => {

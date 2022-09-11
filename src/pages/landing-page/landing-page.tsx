@@ -1,4 +1,4 @@
-import { RefObject, useEffect, useRef, useState } from "react";
+import { RefObject, useContext, useEffect, useRef, useState } from "react";
 import "./landing-page.css"
 import { Button } from "react-bootstrap";
 import Table from "react-bootstrap/Table";
@@ -7,6 +7,7 @@ import { People } from "../../interfaces/people.interface";
 import AddPerson from "../../components/add-person/add-person";
 import Notification from "../../components/toast-notification/toast-notification";
 import SearchBar from "../../components/search-form/searchForm";
+import { searchQueryContext } from "../../contexts/search-query.provider";
 
 const LandingPageComponent = () => {
 
@@ -17,19 +18,29 @@ const LandingPageComponent = () => {
     const locationState = location.state as LocationState ?? {}
     const { showToastMessage, toastMessage } = locationState;
 
+    const { query, list} = useContext(searchQueryContext);
+    const [searchQuery, setSearchQuery] = query;
+    const [savedPeopleList, setSavedPeopleList] = list;
+
     const [people, setPeople] = useState<People[]>([]);
     const [filteredPeople, setFilteredPeople] = useState<People[]>([]);
     const [showAddPerson, setShowAddPerson] = useState(false);
     const [showToast, setShowToast] = useState(showToastMessage);
+
+    const searchRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         fetch("http://localhost:4500/people")
             .then(res => res.json())
             .then(result => {
                 setPeople(result)
-                setFilteredPeople(result);
+                if (searchQuery && savedPeopleList.length && searchRef.current) {
+                    searchRef.current.value = searchQuery;
+                    setFilteredPeople(savedPeopleList)
+                } else
+                    setFilteredPeople(result);
             });
-    }, [])
+    }, [savedPeopleList, searchQuery])
 
     const getRegisteredDate = (registeredDate: string) => {
         const dateInUTC = registeredDate.split(" ");
@@ -54,7 +65,6 @@ const LandingPageComponent = () => {
         setFilteredPeople(people.filter(person => person.name.toLowerCase().includes(query.toLowerCase())))
     }
 
-    const searchRef = useRef<HTMLInputElement>(null);
     const onClearSearchInputHandler = (searchRef: RefObject<HTMLInputElement>) => {
         if (searchRef.current) {
             searchRef.current.value = "";
@@ -62,14 +72,23 @@ const LandingPageComponent = () => {
         setFilteredPeople(people);
     }
 
+    const storeQueryInContext = () => {
+        setSavedPeopleList(filteredPeople);
+        searchRef.current && setSearchQuery(searchRef.current.value);
+    }
+
     const goToPerson = (id: string) => {
         navigate(`/people/${id}`);
+        storeQueryInContext();
     }
 
     return <>
         <div className="utilities-container">
             <Button onClick={toggleAddPersonModal} className="add-btn" variant="primary">Add Person</Button>
-            <SearchBar searchRef={searchRef} onClearSearchInputHandler={onClearSearchInputHandler} onInputChangeHandler={onInputChangeHandler} />
+            <SearchBar
+                searchRef={searchRef} 
+                onClearSearchInputHandler={onClearSearchInputHandler} 
+                onInputChangeHandler={onInputChangeHandler} />
         </div>
         <AddPerson show={showAddPerson} handleClose={toggleAddPersonModal} />
         {!filteredPeople.length && <h4>No data found</h4>}
@@ -90,7 +109,7 @@ const LandingPageComponent = () => {
                         <td>{getRegisteredDate(person.registered)}</td>
                         <td>{getActiveStatus(person.isActive)}</td>
                         <td>
-                            <Link to={`/people/${person.id}/edit`} state={{ person: person }}>Edit</Link>
+                            <Link onClick={storeQueryInContext} to={`/people/${person.id}/edit`} state={{ person: person }}>Edit</Link>
                         </td>
                     </tr>
                 })}

@@ -15,3 +15,13 @@
 .person-name-table {
     cursor: pointer;
 }
+
+.pagination-container {
+    width: 18%;
+    margin: 0 auto;
+}
+
+.page-number-label {
+    margin-left: 10px;
+    margin-right: 10px;
+}

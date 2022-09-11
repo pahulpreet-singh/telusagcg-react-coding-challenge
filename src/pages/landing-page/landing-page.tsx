@@ -1,4 +1,4 @@
-import { RefObject, useContext, useEffect, useRef, useState } from "react";
+import { RefObject, useContext, useEffect, useMemo, useRef, useState } from "react";
 import "./landing-page.css"
 import { Button } from "react-bootstrap";
 import Table from "react-bootstrap/Table";
@@ -10,8 +10,6 @@ import SearchBar from "../../components/search-form/searchForm";
 import { searchQueryContext } from "../../contexts/search-query.provider";
 
 const LandingPageComponent = () => {
-
-    // TODO: add pagination
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -26,6 +24,21 @@ const LandingPageComponent = () => {
     const [filteredPeople, setFilteredPeople] = useState<People[]>([]);
     const [showAddPerson, setShowAddPerson] = useState(false);
     const [showToast, setShowToast] = useState(showToastMessage);
+    const [pageNumber, setPageNumber]= useState(1)
+    const [postNumber]= useState(10)
+
+    const indexOfLastPost = useMemo(() => (pageNumber * postNumber), [pageNumber, postNumber]);
+    const indexOfFirstPost = useMemo(() => (indexOfLastPost - postNumber), [indexOfLastPost, postNumber]);
+    const lastPageNumber = useMemo(() => (Math.ceil(filteredPeople.length / postNumber)), [postNumber, filteredPeople]);
+    const paginatedPosts = useMemo(() => (filteredPeople.slice(indexOfFirstPost, indexOfLastPost)), [indexOfFirstPost, indexOfLastPost, filteredPeople]);
+
+    const handlePrev =()=>{
+        if(pageNumber === 1) return
+        setPageNumber(pageNumber - 1)
+    }
+    const handleNext =()=>{
+        setPageNumber(pageNumber + 1)
+    }
 
     const searchRef = useRef<HTMLInputElement>(null);
 
@@ -62,11 +75,17 @@ const LandingPageComponent = () => {
 
     const onInputChangeHandler = (event: any) => {
         const query = event.target.value;
-        setFilteredPeople(people.filter(person => person.name.toLowerCase().includes(query.toLowerCase())))
+        if (pageNumber === 1) {
+            setFilteredPeople(people.filter(person => person.name.toLowerCase().includes(query.toLowerCase())))
+        } else {
+            setPageNumber(1);
+            setFilteredPeople(people.filter(person => person.name.toLowerCase().includes(query.toLowerCase())));
+        }
     }
 
     const onClearSearchInputHandler = (searchRef: RefObject<HTMLInputElement>) => {
         if (searchRef.current) {
+            (searchRef.current.value !== "") && setPageNumber(1)
             searchRef.current.value = "";
         }
         setFilteredPeople(people);
@@ -91,20 +110,18 @@ const LandingPageComponent = () => {
                 onInputChangeHandler={onInputChangeHandler} />
         </div>
         <AddPerson show={showAddPerson} handleClose={toggleAddPersonModal} />
-        {!filteredPeople.length && <h4>No data found</h4>}
-        {(filteredPeople.length > 0) && <Table striped bordered hover>
+        {!paginatedPosts.length && <h4>No data found</h4>}
+        {(paginatedPosts.length > 0) && <Table striped bordered hover>
             <thead>
                 <tr>
-                    <th>#</th>
                     <th>Name</th>
                     <th>Date Registered</th>
                     <th>Active Status</th>
                 </tr>
             </thead>
             <tbody>
-                {filteredPeople && filteredPeople.map((person, index) => {
+                {paginatedPosts && paginatedPosts.map((person, index) => {
                     return <tr key={person.id}>
-                        <td>{index + 1}</td>
                         <td className="person-name-table" onClick={() => goToPerson(person.id)}>{person.name}</td>
                         <td>{getRegisteredDate(person.registered)}</td>
                         <td>{getActiveStatus(person.isActive)}</td>
@@ -115,6 +132,16 @@ const LandingPageComponent = () => {
                 })}
             </tbody>
         </Table>}
+        <div className="pagination-container">
+            <Button disabled={pageNumber === 1} onClick={handlePrev} variant="primary">-</Button>
+            <span className="page-number-label"> Page {pageNumber} </span>
+            <Button 
+                disabled={pageNumber === lastPageNumber || filteredPeople.length === 0} 
+                onClick={handleNext} 
+                variant="primary">
+                    +
+            </Button>
+        </div>
         {showToast && (
             <div className="notification-toast m-4">
                 <Notification

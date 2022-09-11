@@ -1,0 +1,12 @@
+.notification-toast {
+    border-radius: 25px;
+    text-align: center;
+    min-width: 30%;
+    font-size: 20px;
+    background-color: #665847;
+    color: #ff9900;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    float: "right";
+}

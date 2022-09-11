@@ -3,6 +3,7 @@ import "./view-person.css"
 import { Button, Col, Container, Row } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import { People } from "../../interfaces/people.interface";
+import Notification from "../../components/toast-notification/toast-notification";
 
 const ViewPerson = () => {
 
@@ -10,7 +11,11 @@ const ViewPerson = () => {
     const location = useLocation();
     const personId = location.pathname.split("/")[2];
 
+    const locationState = location.state as LocationState ?? {}
+    const { showToastMessage, toastMessage } = locationState;
+
     const [person, setPerson] = useState<People>();
+    const [showToast, setShowToast] = useState(showToastMessage);
 
     useEffect(() => {
         fetch(`http://localhost:4500/people/${personId}`, {
@@ -34,6 +39,11 @@ const ViewPerson = () => {
         const dateInUTC = registeredDate.split(" ");
         return new Date(dateInUTC[0]).toDateString().slice(4);
     }
+
+    const closeNotification = () => {
+        setShowToast(false);
+        window.history.replaceState({}, document.title)
+    };
 
     if (!person?.name) {
         return <>
@@ -134,9 +144,23 @@ const ViewPerson = () => {
                         {!person.friends && <>No friends</>}
                     </Col>
                 </Row>
+                {showToast && (
+                    <div className="notification-toast m-4">
+                        <Notification
+                            showToast={showToast}
+                            closeNotification={closeNotification}
+                            toastMessage={toastMessage ?? ""}
+                        />
+                    </div>
+                )}
             </Container>
         )}
     </>
+}
+
+interface LocationState {
+    showToastMessage?: boolean,
+    toastMessage?: String,
 }
 
 export default ViewPerson;

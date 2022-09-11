@@ -2,16 +2,22 @@ import { useEffect, useState } from "react";
 import "./landing-page.css"
 import { Button } from "react-bootstrap";
 import Table from "react-bootstrap/Table";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { People } from "../../interfaces/people.interface";
 import AddPerson from "../../components/add-person/add-person";
+import Notification from "../../components/toast-notification/toast-notification";
 
 const LandingPageComponent = () => {
 
     // TODO: add pagination
 
+    const location = useLocation();
+    const locationState = location.state as LocationState ?? {}
+    const { showToastMessage, toastMessage } = locationState;
+
     const [people, setPeople] = useState<People[]>([]);
     const [showAddPerson, setShowAddPerson] = useState(false);
+    const [showToast, setShowToast] = useState(showToastMessage);
 
     useEffect(() => {
         fetch("http://localhost:4500/people")
@@ -33,6 +39,11 @@ const LandingPageComponent = () => {
     const toggleAddPersonModal = () => {
         setShowAddPerson(!showAddPerson);
     }
+
+    const closeNotification = () => {
+        setShowToast(false);
+        window.history.replaceState({}, document.title)
+    };
 
     return <>
         <Button onClick={toggleAddPersonModal} className="add-btn" variant="primary">Add Person</Button>
@@ -60,7 +71,21 @@ const LandingPageComponent = () => {
                 })}
             </tbody>
         </Table>
+        {showToast && (
+            <div className="notification-toast m-4">
+                <Notification
+                    showToast={showToast}
+                    closeNotification={closeNotification}
+                    toastMessage={toastMessage ?? ""}
+                />
+            </div>
+        )}
     </>
+}
+
+interface LocationState {
+    showToastMessage?: boolean,
+    toastMessage?: String,
 }
 
 export default LandingPageComponent;

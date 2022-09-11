@@ -26,7 +26,8 @@ const AddPerson = (props: AddPersonProps) => {
             .then(response => response.json())
             .then(
                 (result) => {
-                    navigate(`/people/${result.id}`)
+                    navigate(`/people/${result.id}`,
+                        { state: { showToastMessage: true, toastMessage: "New Person Added" } })
                 }, (error) => {
                     console.log("error updating", error);
                 });

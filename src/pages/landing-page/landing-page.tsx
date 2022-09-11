@@ -16,21 +16,22 @@ const LandingPageComponent = () => {
     const locationState = location.state as LocationState ?? {}
     const { showToastMessage, toastMessage } = locationState;
 
-    const { query, list} = useContext(searchQueryContext);
+    const { query, list, page} = useContext(searchQueryContext);
     const [searchQuery, setSearchQuery] = query;
     const [savedPeopleList, setSavedPeopleList] = list;
+    const [currentPage, setCurrentPage] = page;
 
     const [people, setPeople] = useState<People[]>([]);
     const [filteredPeople, setFilteredPeople] = useState<People[]>([]);
     const [showAddPerson, setShowAddPerson] = useState(false);
     const [showToast, setShowToast] = useState(showToastMessage);
-    const [pageNumber, setPageNumber]= useState(1)
+    const [pageNumber, setPageNumber]= useState(currentPage ?? 1)
     const [postNumber]= useState(10)
 
     const indexOfLastPost = useMemo(() => (pageNumber * postNumber), [pageNumber, postNumber]);
     const indexOfFirstPost = useMemo(() => (indexOfLastPost - postNumber), [indexOfLastPost, postNumber]);
     const lastPageNumber = useMemo(() => (Math.ceil(filteredPeople.length / postNumber)), [postNumber, filteredPeople]);
-    const paginatedPosts = useMemo(() => (filteredPeople.slice(indexOfFirstPost, indexOfLastPost)), [indexOfFirstPost, indexOfLastPost, filteredPeople]);
+    const paginatedPersons = useMemo(() => (filteredPeople.slice(indexOfFirstPost, indexOfLastPost)), [indexOfFirstPost, indexOfLastPost, filteredPeople]);
 
     const handlePrev =()=>{
         if(pageNumber === 1) return
@@ -93,6 +94,7 @@ const LandingPageComponent = () => {
 
     const storeQueryInContext = () => {
         setSavedPeopleList(filteredPeople);
+        setCurrentPage(pageNumber);
         searchRef.current && setSearchQuery(searchRef.current.value);
     }
 
@@ -110,8 +112,8 @@ const LandingPageComponent = () => {
                 onInputChangeHandler={onInputChangeHandler} />
         </div>
         <AddPerson show={showAddPerson} handleClose={toggleAddPersonModal} />
-        {!paginatedPosts.length && <h4>No data found</h4>}
-        {(paginatedPosts.length > 0) && <Table striped bordered hover>
+        {!paginatedPersons.length && <h4>No data found</h4>}
+        {(paginatedPersons.length > 0) && <Table striped bordered hover>
             <thead>
                 <tr>
                     <th>Name</th>
@@ -120,7 +122,7 @@ const LandingPageComponent = () => {
                 </tr>
             </thead>
             <tbody>
-                {paginatedPosts && paginatedPosts.map((person, index) => {
+                {paginatedPersons && paginatedPersons.map((person) => {
                     return <tr key={person.id}>
                         <td className="person-name-table" onClick={() => goToPerson(person.id)}>{person.name}</td>
                         <td>{getRegisteredDate(person.registered)}</td>

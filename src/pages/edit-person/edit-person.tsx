@@ -18,9 +18,10 @@ const EditPerson = () => {
     const navigate = useNavigate();
     const { person } = location.state as LocationState;
 
-    const { query, list} = useContext(searchQueryContext);
+    const { query, list, page} = useContext(searchQueryContext);
     const [searchQuery, setSearchQuery] = query;
     const [savedPeopleList, setSavedPeopleList] = list;
+    const [currentPage, setCurrentPage] = page;
 
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showToast, setShowToast] = useState(false);
@@ -63,6 +64,7 @@ const EditPerson = () => {
             .then(() => {
                 setSavedPeopleList(null);
                 setSearchQuery(null);
+                setCurrentPage(1);
                 navigate("/people",
                     { state: { showToastMessage: true, toastMessage: "Person has been deleted" } })
             }, (error) => {

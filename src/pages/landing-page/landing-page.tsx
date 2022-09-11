@@ -59,7 +59,8 @@ const LandingPageComponent = () => {
             <SearchBar onInputChangeHandler={onInputChangeHandler} />
         </div>
         <AddPerson show={showAddPerson} handleClose={toggleAddPersonModal} />
-        <Table striped bordered hover>
+        {!filteredPeople.length && <h4>No data found</h4>}
+        {(filteredPeople.length > 0) && <Table striped bordered hover>
             <thead>
                 <tr>
                     <th>#</th>
@@ -71,7 +72,7 @@ const LandingPageComponent = () => {
             <tbody>
                 {filteredPeople && filteredPeople.map((person, index) => {
                     return <tr key={person.id}>
-                        <td>{index+1}</td>
+                        <td>{index + 1}</td>
                         <td>{person.name}</td>
                         <td>{getRegisteredDate(person.registered)}</td>
                         <td>{getActiveStatus(person.isActive)}</td>
@@ -81,7 +82,7 @@ const LandingPageComponent = () => {
                     </tr>
                 })}
             </tbody>
-        </Table>
+        </Table>}
         {showToast && (
             <div className="notification-toast m-4">
                 <Notification
